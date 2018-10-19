@@ -59,12 +59,12 @@ class User(db.Model):
 
 @app.before_request
 def require_login():
-    allowed_routes = ['login', 'signup']
+    allowed_routes = ['login', 'signup', 'list_blogs', 'index']
     if request.endpoint not in allowed_routes and 'username' not in session:
         return redirect('/login')
 
 @app.route('/blog')
-def main_blog():
+def list_blogs():
     posts = Blog.query.all() 
     val = request.args.get('id')
     try:
@@ -114,10 +114,12 @@ def blank_body(body):
 
 @app.route('/newpost', methods=['POST', 'GET'])
 def new_post():
+    owner = User.query.filter_by(username=session['username']).first()
+
     if request.method == 'POST':
         title = request.form['title']
         body = request.form['body']
-        entry = Blog(title, body, owner) #************* owner id?????
+        entry = Blog(title, body, owner) 
 
         title_error = ''
         body_error = ''
@@ -198,30 +200,36 @@ def signup():
         existing_user = User.query.filter_by(username=username).first()
         empty_string = ""
 
-        def check_for_errors(username, password, verify):
         
-            if username == "" or password == "" or verify == "":
-                flash("One or more fields are invalid", 'error')
+        
+        if username == "" or password == "" or verify == "":
+            flash("One or more fields are invalid", 'error')
 
-            if existing_user:
-                flash("User already exists", 'error')
-                
-            if password != verify:
-                flash("Password and password verify do not match", 'error')
+        if existing_user:
+            flash("User already exists", 'error')
 
-            if len(username) < 3 and len(username) > 0:
-                flash("Username is too short", 'error')
+        if len(username) < 3 and len(username) > 0:
+            flash("Username is too short", 'error')
 
-            if len(password) < 3 and len(password) > 0:
-                flash("Password is too short", 'error')
+        if len(password) < 3 and len(password) > 0:
+            flash("Password is too short", 'error')
 
-        if check_for_errors(username, password, verify) and not existing_user and not empty_string:
-            new_user = User(username, password)
-            db.session.add(new_user)
-            db.session.commit()
-            session['username'] = username
-            flash("Welcome,", '{{new_user}}')
-            return redirect('/newpost')
+        if password != verify:
+            flash("Password and password verify do not match", 'error')
+
+
+
+        if not existing_user:
+            if username != empty_string or password != empty_string:
+                if password == verify:
+                    if len(username) > 2:
+                        if len(password) > 2:
+                            new_user = User(username, password)
+                            db.session.add(new_user)
+                            db.session.commit()
+                            session['username'] = username
+                            flash("Logged in")
+                            return redirect('/newpost')
 
 
     return render_template('signup.html')
