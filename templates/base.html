@@ -14,6 +14,8 @@
     <a href='/blog'>Main Blog Page</a>
     
     <a href='/newpost'>Add a Blog Entry</a> <!-- Not sure if this syntax works -->
+
+    <a href='/logout'>Log Out</a>
     </nav>
 
     {% with messages = get_flashed_messages(with_categories=True) %}
@@ -22,7 +24,10 @@
             <li class="{{category}}">{{message}}</li>
         {% endfor %}
         </ul>
+
     {% endwith %}
+
+    
 
     {% block content %}
     {% endblock %}
