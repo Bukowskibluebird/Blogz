@@ -10,25 +10,6 @@ db = SQLAlchemy(app)
 app.secret_key = 'y337kGcys&zP3B'
 
 
-class Task(db.Model):
-
-    id = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(120))
-    completed = db.Column(db.Boolean)
-    owner_id = db.Column(db.Integer, db.ForeignKey('user.id'))
-
-    def __init__(self, name, owner):
-        self.name = name
-        self.completed = False
-        self.owner = owner
-
-
-
-
-
-
-
-
 
 class Blog(db.Model):
 
@@ -96,21 +77,6 @@ def list_blogs():
         return render_template('blog.html', entries=posts)
 
 
-     #tasks = Task.query.filter_by(completed=False,owner=owner).all()
-#    completed_tasks = Task.query.filter_by(completed=True,owner=owner).all()
-#    return render_template('todos.html',title="Get It Done!", 
-#        tasks=tasks, completed_tasks=completed_tasks)   
-
-
-
-#@app.route('/blog?id={{entry.id}}')
-#def bpost_page():
-    #info = Blog.query.filter_by(id='{{entry.id}}').first()
-    #t = info.title
-    #b = info.body
-    
-    #return render_template('register.html', entry=entry)   
-
 
 def blank_title(title):
     if title == "":
@@ -124,16 +90,6 @@ def blank_body(body):
     else:
         return True
 
-    #    if request.method == 'POST':
-#        task_name = request.form['task']
-#        new_task = Task(task_name, owner)
-#        db.session.add(new_task)
-#        db.session.commit()
-
-#    tasks = Task.query.filter_by(completed=False,owner=owner).all()
-#    completed_tasks = Task.query.filter_by(completed=True,owner=owner).all()
-#    return render_template('todos.html',title="Get It Done!", 
-#        tasks=tasks, completed_tasks=completed_tasks)
 
 
 
@@ -170,7 +126,6 @@ def new_post():
 
 
     else:
-        #entries = Blog.query.all()
         return render_template('newpost.html')
 
 
@@ -178,7 +133,7 @@ def new_post():
 @app.route('/')
 def index():
 
-    users = Blog.query.all() 
+    users = User.query.all() 
     user_id = request.args.get('userID')
     empty_string = ""
 
@@ -190,18 +145,6 @@ def index():
         
     #except:
     return render_template('index.html', users=users)
-
-
-
-
-
-       #?????????????? user = User.query.filter_by(email=email).first()
-        #if user and user.password == password:
-        #    session['email'] = email
-        #    flash("Logged in")
-        #    return redirect('/')redirect
-        #else:
-         #   flash('User password incorrect, or user does not exist', 'error')
 
     
 
@@ -218,7 +161,7 @@ def login():
             return redirect('/newpost')
         
         elif not user:
-            flash('User does not exist', 'error') #Check to see if this works!
+            flash('User does not exist', 'error') 
 
         else:
             flash('User password incorrect', 'error')
@@ -236,7 +179,6 @@ def signup():
         password = request.form['password']
         verify = request.form['verify']
 
-        # TODO - validate user's data
 
         existing_user = User.query.filter_by(username=username).first()
         empty_string = ""
@@ -281,34 +223,6 @@ def logout():
     del session['username']
     return redirect('/login')
 
-
-#@app.route('/', methods=['POST', 'GET'])
-#def index():
-
-#    owner = User.query.filter_by(email=session['email']).first()
-
-#    if request.method == 'POST':
-#        task_name = request.form['task']
-#        new_task = Task(task_name, owner)
-#        db.session.add(new_task)
-#        db.session.commit()
-
-#    tasks = Task.query.filter_by(completed=False,owner=owner).all()
-#    completed_tasks = Task.query.filter_by(completed=True,owner=owner).all()
-#    return render_template('todos.html',title="Get It Done!", 
-#        tasks=tasks, completed_tasks=completed_tasks)
-
-
-#@app.route('/delete-task', methods=['POST'])
-#def delete_task():
-
-#    task_id = int(request.form['task-id'])
-#    task = Task.query.get(task_id)
-#    task.completed = True
-#    db.session.add(task)
-#    db.session.commit()
-
-#    return redirect('/')
 
 
 if __name__ == '__main__':
