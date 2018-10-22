@@ -5,5 +5,7 @@
 <form action="/blog?id={{id}}" >
 
 <p>{{entry.body}}</p>
+
+<p><h5>Written by <a href="http://127.0.0.1:5000/blog?userID={{entry.owner_id}}" >{{entry.owner.username}}</a></h5></p> <!--***************-->
     
 {% endblock %}

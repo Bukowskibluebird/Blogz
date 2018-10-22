@@ -1,12 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
-<h1>Build a Blog</h1>
+<h1>Blog Posts!</h1>
+<form action="/blog?userID={{owner_id}}" >
 
-<form action="/blog" method="get">
-
-    
-</form>
 
 <hr />
 
@@ -16,7 +13,7 @@
 
     <ul>
         {% for entry in entries %}
-        <input type="hidden" name="id" value="{{entry.id}}" />
+        <!-- <input type="hidden" name="id" value="{{entry.id}}" /> -->
         <li><a href="http://127.0.0.1:5000/blog?id={{entry.id}}">{{entry.title}}</a>
 
             <br>
@@ -35,8 +32,13 @@
 
 <hr />
 
-
-
-
-
+    
 {% endblock %}
+
+
+
+<!-- <h1>{{entry.title}}</h1>
+<form action="/blog?id={{id}}" >
+
+<p>{{entry.body}}</p> -->
+    

@@ -67,13 +67,39 @@ def require_login():
 def list_blogs():
     posts = Blog.query.all() 
     val = request.args.get('id')
+    
+    username = request.args.get('user')
+    user_id = request.args.get('userID')
+   
+  
+        
     try:
-        if val.isdigit() == True:
+
+        if val:
             entry = Blog.query.filter_by(id=val).first()
             return render_template('single_post.html', entry=entry)
+
+        elif user_id:
+            entries = Blog.query.filter_by(owner_id=user_id).all()
+            return render_template('single_author.html', entries=entries)
+
+
+        else:
+            if username.isalnum() == True:
+                owner_id = username.owner_id
+                
+                entries = Blog.query.filter_by(owner_id=owner_id).all() 
+                return render_template('single_author.html', entries=entries) #singlular or plural?
+
     except:
 
         return render_template('blog.html', entries=posts)
+
+
+     #tasks = Task.query.filter_by(completed=False,owner=owner).all()
+#    completed_tasks = Task.query.filter_by(completed=True,owner=owner).all()
+#    return render_template('todos.html',title="Get It Done!", 
+#        tasks=tasks, completed_tasks=completed_tasks)   
 
 
 
@@ -149,6 +175,21 @@ def new_post():
 
 
 
+@app.route('/')
+def index():
+
+    users = Blog.query.all() 
+    user_id = request.args.get('userID')
+    empty_string = ""
+
+    #try:
+        #if user_id.isdigit() == True:
+            #user = Blog.query.filter_by(user=one_user).first() #necessary?
+            #return redirect('/blog?userID={{user_id}}') #single or plural?
+            #return render_template()
+        
+    #except:
+    return render_template('index.html', users=users)
 
 
 
